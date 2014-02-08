@@ -1,18 +1,14 @@
-=begin
+# A simple game of blackjack
+# Built by Raleigh St. Clair
+# Twitter: raleighesc  Github: restc
 
-This is the single-player version of Blackjack
-Built for testing
-
-=> load '/Users/restc/Documents/Dropbox/Card Deck/singlep_blackjack.rb'
-=> load '/Users/raleigh/Documents/Dropbox/Card Deck/singlep_blackjack.rb'
-
-=end
+# This is my first working app,
+# please excuse the hackiness.
 
 
 ####################
 ###     CARD     ###
-#                  #
-#                  #
+
 class Card
   attr_reader :number, :suit
 
@@ -66,8 +62,7 @@ end #Class Card
 
 ####################
 ###     DECK     ###
-#                  #
-#                  #
+
 class Deck
   # This will gather the cards needed to create a full deck
   
@@ -112,8 +107,7 @@ end # End Deck class
 
 ####################
 ###    PURSE     ###
-#                  #
-#                  #
+
 class Purse
   attr_reader :value
 
@@ -166,7 +160,6 @@ end # Player class
 
 ######################
 ###      HAND      ###
-#                    #
 
 class Hand
 
@@ -251,7 +244,7 @@ end
 
 ##############################
 ###        BLACKJACK       ###
-#                            #
+
 
 class Blackjack
 
@@ -489,7 +482,7 @@ class Blackjack::Gameloop
 
 end
 
-##############################
+
 ##############################
 ###    BLACKJACK BANNER    ###
 
@@ -527,9 +520,9 @@ end
 
 
 ######################
-### BLACKJACK CARD ###
-######################
-#                    #
+#   BLACKJACK CARD   #
+
+
 class Blackjack::Card < Card
   attr_reader :number, :suit
 
@@ -575,7 +568,7 @@ end # end Blackjack::Card class
 
 ####################
 ###  DECK ERRORS ###
-#                  #
+
 class DeckErrors < RuntimeError
   def self.invalid_suit
     print "Please use a valid suit: Hearts, Clubs, Diamonds, or Spades.\n"
@@ -591,9 +584,9 @@ end #DeckErrors
 ####################
 
 ######################
-### BLACKJACK ERRORS #
-#                    #
-#
+## BLACKJACK ERRORS ##
+
+
 class BlackjackErrors < RuntimeError
 
   def not_enough_players
@@ -627,8 +620,8 @@ end
 
 ####################
 ###     BET      ###
-#                  #
-#                  #
+
+
 class Bet
 
   def initialize
@@ -645,6 +638,8 @@ class Bet
   end
 
 end
+#       BET        #
+####################
 
 
 Blackjack::Gameloop.new
