@@ -228,17 +228,16 @@ class Hand
     self.cards.each do |card|
       case card.number
       when 11
-        10
+        puts "Jack of #{card.suit}"
       when 12
-        10
+        puts "Queen of #{card.suit}"
       when 13
-        10
+        puts "King of #{card.suit}"
       when 14
-        11
+        puts "Ace of #{card.suit}"
       else
-        card.number
+        puts "#{card.number} of #{card.suit}"
       end
-      puts "#{card.number} of #{card.suit}"
     end
     nil
   end
@@ -312,6 +311,7 @@ class Blackjack
         if player.score == 21
           blackjack player
         else
+          # Printing actual value of cards here
           puts "\n#{player.name} has #{player.hand.points} points and #{player.hand.cards_in_hand} cards in hand.\n"
           puts "#{player.hand.show_cards}\n"
         end
