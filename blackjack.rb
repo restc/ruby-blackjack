@@ -6,6 +6,7 @@
 # please excuse the hackiness.
 
 
+
 ####################
 ###     CARD     ###
 
@@ -131,6 +132,9 @@ class Player
 
   attr_accessor :busted
   attr_accessor :stand
+
+  # Create alias for score so that :points responds as well
+  alias :points :score
 
   def initialize name
     @name = name
@@ -318,23 +322,24 @@ class Blackjack
     @players.each do |player|
       case player.name
       when "Dealer"
-        if player.score == 21
-          blackjack player
-        elsif player.score > 21
-          aces = player.hand.aces?
-          if aces > 0
-            aces.times do 
-              player.score -= 10
-            end
-            unless player.score >= 17
-              self.draw_one player
-              self.play
-            end
-          end
-          blackjack @players.last
-        elsif player.score < 17 
+        if player.score < 17
           self.draw_one player
-          scoreboard
+
+
+        # # if player.score == 21
+        # #   blackjack player
+        # # elsif player.score > 21
+        # #   aces = player.hand.aces?
+        # #   if aces > 0
+        # #     aces.times do 
+        # #       player.score -= 10
+        # #     end
+        # #     unless player.score >= 17
+        # #       self.draw_one player
+        # #       self.play
+        # #     end
+        # #   end
+        # #   blackjack @players.last
         elsif player.score >= 17
           player.stand = true
         end
@@ -376,10 +381,10 @@ class Blackjack
 
   def validate_num_players
     if @players.length > 2
-      BlackjackErrors.too_many_players
+      raise BlackjackErrors.too_many_players
       return false
     elsif @players.length < 2
-      BlackjackErrors.not_enough_players
+      raise BlackjackErrors.not_enough_players
       return false
     else
       return true
@@ -447,12 +452,29 @@ class Blackjack
       end
     end
     @winner = high_score.first
-    blackjack @winner
+    blackjack_by_high_score @winner
+  end
+
+  def blackjack_by_high_score player
+    puts "#{player.name} has won with a high score of #{player.score} points!"
+    won = @players.index(player)
+    # loser = ''
+    # if won == 0
+    #   loser = @players.pop
+    # elsif won == 1
+    #   loser = @players.shift
+    # else
+    #   puts "Some kind of error here."
+    # end
+    
+    nil
+    sleep(2)
+    Blackjack::Gameloop.play_again?
   end
 
   def blackjack player
     puts "We have a winner, #{player.name} has won with #{player.score} points!"
-    sleep(5)
+    sleep(2)
     Blackjack::Gameloop.play_again?
   end
 
@@ -467,11 +489,11 @@ class Blackjack::Gameloop
     game.play
   end
 
-  def self.play_again?
+  def self.play_again? player
     puts "Would you like to play again?"
     input = gets.chomp
     if ['yes', 'y'].include? input.downcase
-      Blackjack::Gameloop.new
+      Blackjack::Gameloop.new player.name
     elsif ['no', 'n'].include? input.downcase
       puts "Thanks for playing"
       abort
@@ -489,19 +511,33 @@ end
 class Blackjack::Graphics
   def self.blackjack_banner
     clear_screen
-    puts     "\n\n"
-    puts     "       *** ***                   @@@@        "
-    puts     "      *********               @@  @@  @@     "
-    puts     "       *******               @@@@@@@@@@@     " 
-    puts     "         ***                  @@ @@@ @@      "
-    puts     "          *                     @@@@@        "
-    puts     "                  BLACKJACK                  "
-    puts     "          *                       *          "
-    puts     "         ***                    *   *        "
-    puts     "        *****                 *       *      "
-    puts     "       *******                  *   *        "
-    puts     "          *                       *          "
-    sleep(2)
+    
+    puts "\n\n"                                                                                       
+    puts "              $$$$$                                  @@@@@@@   @@@@@@@       "        
+    puts "             $$$$$$$                                @@@@@@@@@ @@@@@@@@@      "       
+    puts "             $$$$$$$                                @@@@@@@@@@@@@@@@@@@      "      
+    puts "              $$$$$                                  @@@@@@@@@@@@@@@@@       "    
+    puts "        $$$$$ $$$$$ $$$$$                              @@@@@@@@@@@@@         "    
+    puts "       $$$$$$$$$$$$$$$$$$$                               @@@@@@@@@           "     
+    puts "       $$$$$$$$$$$$$$$$$$$                                @@@@@@@            " 
+    puts "        $$$$$   $   $$$$$                                   @@@              "          
+    puts "               $$$                                           @               "      
+    puts "                                                                             "     
+    puts "                                   BLACKJACK                                 "     
+    puts "                                                                             "     
+    puts "                                                                             "     
+    puts "               @@                                            @               "              
+    puts "              @@@@                                          @@@              "              
+    puts "             @@@@@@                                       @@@@@@@            "              
+    puts "            @@@@@@@@                                    @@@@@@@@@@@          "              
+    puts "           @@@@@@@@@@                                 @@@@@@@@@@@@@@@        "              
+    puts "            @@@@@@@@                                 @@@@@@@@@@@@@@@@@       "               
+    puts "             @@@@@@                                   @@@@@@@@@@@@@@@        "                
+    puts "              @@@@                                          @@@              "                 
+    puts "               @@                                         @@@@@@@            "  
+    puts "                                                                             "
+           
+    sleep(1)
   end
 
   def self.short_blackjack_banner
@@ -511,6 +547,62 @@ class Blackjack::Graphics
   def self.clear_screen
     puts `clear`
   end
+
+  def empty_paragraph
+    puts "                       "
+    puts "                       "
+    puts "                       "
+    puts "                       "
+  end
+
+  def heart
+    puts "   @@@@@@@   @@@@@@@   "
+    puts "  @@@@@@@@@ @@@@@@@@@  "
+    puts "  @@@@@@@@@@@@@@@@@@@  "
+    puts "   @@@@@@@@@@@@@@@@@   "
+    puts "     @@@@@@@@@@@@@     "
+    puts "       @@@@@@@@@       "
+    puts "        @@@@@@@        "
+    puts "          @@@          " 
+    puts "           @           "
+  end 
+
+  def diamond
+    puts "          @@           "
+    puts "         @@@@          "
+    puts "        @@@@@@         "
+    puts "       @@@@@@@@        "
+    puts "      @@@@@@@@@@       "
+    puts "       @@@@@@@@        "
+    puts "        @@@@@@         "
+    puts "         @@@@          "
+    puts "          @@           "
+  end
+
+  def club
+    puts "         $$$$$         " 
+    puts "        $$$$$$$        " 
+    puts "        $$$$$$$        " 
+    puts "         $$$$$         " 
+    puts "   $$$$$ $$$$$ $$$$$   " 
+    puts "  $$$$$$$$$$$$$$$$$$$  " 
+    puts "  $$$$$$$$$$$$$$$$$$$  " 
+    puts "   $$$$$   $   $$$$$   "
+    puts "          $$$          "                           
+  end
+
+  def spade
+    puts "           @           "
+    puts "          @@@          "
+    puts "        @@@@@@@        "
+    puts "      @@@@@@@@@@@      "
+    puts "    @@@@@@@@@@@@@@@    "
+    puts "   @@@@@@@@@@@@@@@@@   "
+    puts "    @@@@@@@@@@@@@@@    "
+    puts "          @@@          "
+    puts "        @@@@@@@        "
+  end
+
 end
 ###    BLACKJACK BANNER    ###
 ##############################
@@ -618,16 +710,34 @@ end
 ######################
 
 
+class Blackjack::Notice
+  def card_draw player
+    puts "#{player} drew a card."
+  end
+
+  def busted player
+    puts "#{player.name} has busted with a score of #{player.score} and #{player.hand.cards_in_hand} cards."
+  end
+end
+
 ####################
 ###     BET      ###
 
 
-class Bet
+class Bet < Player
+  # A bet belongs to a player
+  # In order to make a new bet, Player object must exist for this player
+  # The player must have a positive value in `player.purse`
+  # The player must have enough in the purse to pay for his or her
+  # bet to prevent owing flesh.
+
+  
 
   def initialize
+
   end
 
-  def b_e_t player
+  def self.make_bet player
     puts "Would you like to bet? Use [b]et or [s]tay."
     input = gets.chomp
     if ['b', 'bet'].include? input
@@ -637,9 +747,13 @@ class Bet
     end
   end
 
+  def self.player_purse player
+    @purse = player.purse
+  end
+
 end
 #       BET        #
 ####################
 
 
-Blackjack::Gameloop.new
+#Blackjack::Gameloop.new
